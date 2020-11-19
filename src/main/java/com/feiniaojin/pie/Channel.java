@@ -3,7 +3,7 @@ package com.feiniaojin.pie;
 /**
  * 通道
  *
- * @author: <a href=mailto:qinyujie3@jd.com>qinyujie3</a>
+ * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public interface Channel<IN, OUT> {
 

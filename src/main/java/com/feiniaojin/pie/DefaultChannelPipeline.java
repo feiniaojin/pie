@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 /**
  * ChannelPipeline默认实现
  *
- * @author: <a href=mailto:qinyujie3@jd.com>qinyujie3</a>
+ * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT> {
 
