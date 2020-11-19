@@ -42,7 +42,7 @@ public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT>
 
     @Override
     public ChannelPipeline fireExceptionCaught(Throwable cause, InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) {
-       AbstractChannelHandlerContext.invokeExceptionCaught(head, cause, inWrapper, outWrapper);
+        AbstractChannelHandlerContext.invokeExceptionCaught(head, cause, inWrapper, outWrapper);
         return this;
     }
 
@@ -71,14 +71,14 @@ public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT>
 
         @Override
         public void channelProcess(ChannelHandlerContext ctx, InWrapper inWrapper, OutWrapper outWrapper) throws Exception {
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("tail:channelProcess:there is no more handler");
             }
         }
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause, InWrapper inWrapper, OutWrapper outWrapper) throws Exception {
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("tail:exceptionCaught:there is no more handler");
             }
         }

@@ -8,7 +8,7 @@ package com.feiniaojin.pie;
 public interface Channel<IN, OUT> {
 
     Channel process(InWrapper<IN> inWrapper,
-                                                                  OutWrapper<OUT> outWrapper);
+                    OutWrapper<OUT> outWrapper);
 
     ChannelPipeline<IN, OUT> pipeline();
 

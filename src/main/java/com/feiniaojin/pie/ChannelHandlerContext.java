@@ -14,12 +14,12 @@ public interface ChannelHandlerContext<IN, OUT> {
     ChannelPipeline pipeline();
 
     ChannelHandlerContext<IN, OUT> process(InWrapper<IN> inWrapper,
-                                                                                         OutWrapper<OUT> outWrapper);
+                                           OutWrapper<OUT> outWrapper);
 
     ChannelHandlerContext<IN, OUT> fireExceptionCaught(Throwable cause,
-                                                                                                     InWrapper<IN> inWrapper,
-                                                                                                     OutWrapper<OUT> outWrapper);
+                                                       InWrapper<IN> inWrapper,
+                                                       OutWrapper<OUT> outWrapper);
 
     ChannelHandlerContext<IN, OUT> fireChannelProcess(InWrapper<IN> inWrapper,
-                                                                                                    OutWrapper<OUT> outWrapper);
+                                                      OutWrapper<OUT> outWrapper);
 }

@@ -8,18 +8,18 @@ package com.feiniaojin.pie;
 public interface ChannelPipeline<IN, OUT> {
 
     ChannelPipeline process(InWrapper<IN> inWrapper,
-                                                                          OutWrapper<OUT> outWrapper);
+                            OutWrapper<OUT> outWrapper);
 
     ChannelPipeline addLast(String name, ChannelHandler handler);
 
     Channel channel();
 
     ChannelPipeline fireExceptionCaught(Throwable cause,
-                                                                                      InWrapper<IN> inWrapper,
-                                                                                      OutWrapper<OUT> outWrapper);
+                                        InWrapper<IN> inWrapper,
+                                        OutWrapper<OUT> outWrapper);
 
     ChannelPipeline fireChannelProcess(InWrapper<IN> inWrapper,
-                                                                                     OutWrapper<OUT> outWrapper);
+                                       OutWrapper<OUT> outWrapper);
 
     ChannelHandlerContext head();
 
