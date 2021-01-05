@@ -5,7 +5,7 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public abstract class AbstractChannel<IN, OUT> implements Channel<IN, OUT> {
+public abstract class AbstractChannel implements Channel {
 
     private DefaultChannelPipeline pipeline;
 
@@ -20,11 +20,11 @@ public abstract class AbstractChannel<IN, OUT> implements Channel<IN, OUT> {
     }
 
     @Override
-    public ChannelPipeline<IN, OUT> pipeline() {
+    public ChannelPipeline pipeline() {
         return pipeline;
     }
 
-    public Channel process(InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) {
+    public Channel process(Object inWrapper, Object outWrapper) {
         processor.doProcess(inWrapper, outWrapper);
         return this;
     }
@@ -32,7 +32,7 @@ public abstract class AbstractChannel<IN, OUT> implements Channel<IN, OUT> {
     private class DefaultChannelProcessorImpl implements ChannelProcessor {
 
         @Override
-        public void doProcess(InWrapper inWrapper, OutWrapper outWrapper) {
+        public void doProcess(Object inWrapper, Object outWrapper) {
             pipeline.process(inWrapper, outWrapper);
         }
     }

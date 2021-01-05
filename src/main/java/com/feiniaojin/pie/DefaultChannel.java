@@ -5,5 +5,5 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public class DefaultChannel<IN, OUT> extends AbstractChannel<IN, OUT> {
+public class DefaultChannel extends AbstractChannel {
 }

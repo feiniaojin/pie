@@ -5,15 +5,15 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public interface Channel<IN, OUT> {
+public interface Channel {
 
-    Channel process(InWrapper<IN> inWrapper,
-                    OutWrapper<OUT> outWrapper);
+    Channel process(Object in,
+                    Object out);
 
-    ChannelPipeline<IN, OUT> pipeline();
+    ChannelPipeline pipeline();
 
-    interface ChannelProcessor<IN, OUT> {
-        void doProcess(InWrapper<IN> inWrapper,
-                       OutWrapper<OUT> outWrapper);
+    interface ChannelProcessor {
+        void doProcess(Object in,
+                       Object out);
     }
 }

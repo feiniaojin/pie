@@ -5,21 +5,21 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public interface ChannelPipeline<IN, OUT> {
+public interface ChannelPipeline {
 
-    ChannelPipeline process(InWrapper<IN> inWrapper,
-                            OutWrapper<OUT> outWrapper);
+    ChannelPipeline process(Object in,
+                            Object out);
 
     ChannelPipeline addLast(String name, ChannelHandler handler);
 
     Channel channel();
 
     ChannelPipeline fireExceptionCaught(Throwable cause,
-                                        InWrapper<IN> inWrapper,
-                                        OutWrapper<OUT> outWrapper);
+                                        Object in,
+                                        Object out);
 
-    ChannelPipeline fireChannelProcess(InWrapper<IN> inWrapper,
-                                       OutWrapper<OUT> outWrapper);
+    ChannelPipeline fireChannelProcess(Object in,
+                                       Object out);
 
     ChannelHandlerContext head();
 

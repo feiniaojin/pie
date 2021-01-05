@@ -5,7 +5,7 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public interface ChannelHandlerContext<IN, OUT> {
+public interface ChannelHandlerContext {
 
     Channel channel();
 
@@ -13,13 +13,13 @@ public interface ChannelHandlerContext<IN, OUT> {
 
     ChannelPipeline pipeline();
 
-    ChannelHandlerContext<IN, OUT> process(InWrapper<IN> inWrapper,
-                                           OutWrapper<OUT> outWrapper);
+    ChannelHandlerContext process(Object in,
+                                  Object out);
 
-    ChannelHandlerContext<IN, OUT> fireExceptionCaught(Throwable cause,
-                                                       InWrapper<IN> inWrapper,
-                                                       OutWrapper<OUT> outWrapper);
+    ChannelHandlerContext fireExceptionCaught(Throwable cause,
+                                              Object in,
+                                              Object out);
 
-    ChannelHandlerContext<IN, OUT> fireChannelProcess(InWrapper<IN> inWrapper,
-                                                      OutWrapper<OUT> outWrapper);
+    ChannelHandlerContext fireChannelProcess(Object in,
+                                             Object out);
 }

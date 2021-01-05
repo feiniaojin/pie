@@ -5,52 +5,38 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public class BootStrap<IN, OUT> {
+public class BootStrap {
 
-    private Channel<IN, OUT> channel;
+    private Channel channel;
 
-    private IN in;
+    private Object in;
 
-    private OutFactory<OUT> outFactory;
+    private OutFactory outFactory;
 
-    private OutWrapperFactory<OUT> outWrapperFactory = new DefaultOutWrapperFactory<OUT>();
-
-    private InWrapperFactory<IN> inWrapperFactory = new DefaultInWrapperFactory<IN>();
-
-    public BootStrap<IN, OUT> channel(Channel<IN, OUT> channel) {
+    public BootStrap channel(Channel channel) {
         this.channel = channel;
         return this;
     }
 
-    public BootStrap<IN, OUT> inboundParameter(IN in) {
+    public BootStrap inboundParameter(Object in) {
         this.in = in;
         return this;
     }
 
-    public BootStrap<IN, OUT> inWrapperFactory(InWrapperFactory<IN> inWrapperFactory) {
-        this.inWrapperFactory = inWrapperFactory;
-        return this;
-    }
 
-    public BootStrap<IN, OUT> outWrapperFactory(OutWrapperFactory<OUT> outWrapperFactory) {
-        this.outWrapperFactory = outWrapperFactory;
-        return this;
-    }
-
-    public BootStrap<IN, OUT> outFactory(OutFactory<OUT> outFactory) {
+    public BootStrap outFactory(OutFactory outFactory) {
         this.outFactory = outFactory;
         return this;
     }
 
-    public BootStrap<IN, OUT> addChannelHandlerAtLast(String name, ChannelHandler channelHandler) {
+    public BootStrap addChannelHandlerAtLast(String name, ChannelHandler channelHandler) {
         this.channel.pipeline().addLast(name, channelHandler);
         return this;
     }
 
-    public OUT process() {
-        InWrapper<IN> inInWrapper = inWrapperFactory.newInstance(in);
-        OutWrapper<OUT> outWrapper = outWrapperFactory.newInstance(outFactory.newInstance());
-        channel.process(inInWrapper, outWrapper);
-        return outWrapper.getOut();
+    public Object process() {
+        Object out = outFactory.newInstance();
+        channel.process(in, out);
+        return out;
     }
 }

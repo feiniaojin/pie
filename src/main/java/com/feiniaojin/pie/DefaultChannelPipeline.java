@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT> {
+public class DefaultChannelPipeline implements ChannelPipeline {
 
-    AbstractChannelHandlerContext<IN, OUT> head;
-    AbstractChannelHandlerContext<IN, OUT> tail;
+    AbstractChannelHandlerContext head;
+    AbstractChannelHandlerContext tail;
 
     private static final String HEAD_NAME = generateName0(HeadContext.class);
     private static final String TAIL_NAME = generateName0(TailContext.class);
@@ -41,14 +41,17 @@ public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT>
     }
 
     @Override
-    public ChannelPipeline fireExceptionCaught(Throwable cause, InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) {
-        AbstractChannelHandlerContext.invokeExceptionCaught(head, cause, inWrapper, outWrapper);
+    public ChannelPipeline fireExceptionCaught(Throwable cause,
+                                               Object in,
+                                               Object out) {
+        AbstractChannelHandlerContext.invokeExceptionCaught(head, cause, in, out);
         return this;
     }
 
     @Override
-    public ChannelPipeline fireChannelProcess(InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) {
-        AbstractChannelHandlerContext.invokeChannelProcess(head, inWrapper, outWrapper);
+    public ChannelPipeline fireChannelProcess(Object in,
+                                              Object out) {
+        AbstractChannelHandlerContext.invokeChannelProcess(head, in, out);
         return this;
     }
 
@@ -70,25 +73,25 @@ public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT>
         }
 
         @Override
-        public void channelProcess(ChannelHandlerContext ctx, InWrapper inWrapper, OutWrapper outWrapper) throws Exception {
+        public void channelProcess(ChannelHandlerContext ctx, Object in, Object out) throws Exception {
             if (logger.isDebugEnabled()) {
                 logger.debug("tail:channelProcess:there is no more handler");
             }
         }
 
         @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause, InWrapper inWrapper, OutWrapper outWrapper) throws Exception {
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause, Object in, Object out) throws Exception {
             if (logger.isDebugEnabled()) {
                 logger.debug("tail:exceptionCaught:there is no more handler");
             }
         }
     }
 
-    final static class HeadContext<IN, OUT> extends AbstractChannelHandlerContext<IN, OUT> implements ChannelHandler<IN, OUT> {
+    final static class HeadContext extends AbstractChannelHandlerContext implements ChannelHandler {
 
         private Logger logger = LoggerFactory.getLogger(TailContext.class);
 
-        HeadContext(DefaultChannelPipeline<IN, OUT> pipeline) {
+        HeadContext(DefaultChannelPipeline pipeline) {
             super(pipeline, HEAD_NAME, HeadContext.class);
         }
 
@@ -99,21 +102,26 @@ public class DefaultChannelPipeline<IN, OUT> implements ChannelPipeline<IN, OUT>
 
 
         @Override
-        public void channelProcess(ChannelHandlerContext ctx, InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) throws Exception {
+        public void channelProcess(ChannelHandlerContext ctx,
+                                   Object in,
+                                   Object out) throws Exception {
             logger.info("head:channelProcess");
-            ctx.fireChannelProcess(inWrapper, outWrapper);
+            ctx.fireChannelProcess(in, out);
         }
 
         @Override
-        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause, InWrapper<IN> inWrapper, OutWrapper<OUT> outWrapper) throws Exception {
+        public void exceptionCaught(ChannelHandlerContext ctx,
+                                    Throwable cause,
+                                    Object in,
+                                    Object out) throws Exception {
             logger.info("head:exceptionCaught");
         }
     }
 
     @Override
-    public ChannelPipeline process(InWrapper<IN> inWrapper,
-                                   OutWrapper<OUT> outWrapper) {
-        head.process(inWrapper, outWrapper);
+    public ChannelPipeline process(Object in,
+                                   Object out) {
+        head.process(in, out);
         return this;
     }
 

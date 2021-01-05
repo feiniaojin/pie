@@ -5,14 +5,14 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public interface ChannelHandler<IN, OUT> {
+public interface ChannelHandler {
 
     void channelProcess(ChannelHandlerContext ctx,
-                        InWrapper<IN> inWrapper,
-                        OutWrapper<OUT> outWrapper) throws Exception;
+                        Object in,
+                        Object out) throws Exception;
 
     void exceptionCaught(ChannelHandlerContext ctx,
                          Throwable cause,
-                         InWrapper<IN> inWrapper,
-                         OutWrapper<OUT> outWrapper) throws Exception;
+                         Object in,
+                         Object out) throws Exception;
 }
