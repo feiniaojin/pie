@@ -11,7 +11,7 @@ public class BootStrap {
 
     private Object in;
 
-    private OutFactory outFactory;
+    private OutboundFactory outboundFactory;
 
     public BootStrap channel(Channel channel) {
         this.channel = channel;
@@ -24,8 +24,8 @@ public class BootStrap {
     }
 
 
-    public BootStrap outFactory(OutFactory outFactory) {
-        this.outFactory = outFactory;
+    public BootStrap outboundFactory(OutboundFactory outboundFactory) {
+        this.outboundFactory = outboundFactory;
         return this;
     }
 
@@ -35,7 +35,7 @@ public class BootStrap {
     }
 
     public Object process() {
-        Object out = outFactory.newInstance();
+        Object out = outboundFactory.newInstance();
         channel.process(in, out);
         return out;
     }

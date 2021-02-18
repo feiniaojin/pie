@@ -5,6 +5,6 @@ package com.feiniaojin.pie;
  *
  * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
-public interface OutFactory {
+public interface OutboundFactory {
     Object newInstance();
 }

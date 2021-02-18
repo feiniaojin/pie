@@ -1,6 +1,4 @@
 import com.feiniaojin.pie.BootStrap;
-import com.feiniaojin.pie.ChannelHandler;
-import com.feiniaojin.pie.ChannelHandlerContext;
 
 /**
  * TODO:Add the description of this class.
@@ -17,60 +15,13 @@ public class PieTest {
 
         BootStrap bootStrap = new BootStrap();
         Result result = (Result) bootStrap
-                .inboundParameter(dto)
-                .outFactory(new OutFactoryImpl())
-                .channel(new UserCheckChannel())
-                .addChannelHandlerAtLast("first", new ChannelHandler() {
-                    @Override
-                    public void channelProcess(ChannelHandlerContext ctx,
-                                               Object in,
-                                               Object out) throws Exception {
-                        System.out.println("first:11111");
-                        ((UserDto) in).setName("first:change");
-//                        throw new RuntimeException("");
-                        Result re = (Result) out;
-                        re.setCode(100);
-                        re.setMsg("success");
-//                        ctx.fireChannelProcess(inWrapper, outWrapper);
-                    }
-
-                    @Override
-                    public void exceptionCaught(ChannelHandlerContext ctx,
-                                                Throwable cause,
-                                                Object in,
-                                                Object out) throws Exception {
-                        System.out.println("+++++");
-                        Result re = (Result) out;
-                        re.setCode(404);
-                        re.setMsg("异常");
-                        ctx.fireExceptionCaught(cause, in, out);
-                    }
-                }).addChannelHandlerAtLast("second", new ChannelHandler() {
-
-                    @Override
-                    public void channelProcess(ChannelHandlerContext ctx,
-                                               Object in,
-                                               Object out) throws Exception {
-                        System.out.println(((UserDto) in).getName());
-                        System.out.println("second:22222");
-                        Result re = (Result) out;
-                        re.setCode(200);
-                        re.setMsg("success");
-                        ctx.fireChannelProcess(in, out);
-                    }
-
-                    @Override
-                    public void exceptionCaught(ChannelHandlerContext ctx,
-                                                Throwable cause,
-                                                Object in,
-                                                Object out) throws Exception {
-                        Result re = (Result) out;
-                        System.out.println(re.getCode());
-                        System.out.println(re.getMsg());
-                        re.setCode(500);
-                        re.setMsg("500异常");
-                    }
-                }).process();
+                .inboundParameter(dto)//入参
+                .outboundFactory(new OutFactoryImpl())//出参工厂
+                .channel(new UserCheckChannel())//自定义channel
+                .addChannelHandlerAtLast("first", new FirstHandler())//第一个handler
+                .addChannelHandlerAtLast("second", new SecondHandler())//第二个handler
+                .process();//执行
+        //result为执行结果
         System.out.println(result.getCode());
         System.out.println(result.getMsg());
     }
