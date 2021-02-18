@@ -17,7 +17,7 @@ pie的核心代码抽取自netty，90%的api与netty是一致的。
     <groupId>com.feiniaojin</groupId>
     <artifactId>pie</artifactId>
     <version>1.0-SNAPSHOT</version>
-</dependency>dependency>
+</dependency>
 ```
 
 ## 2.2 实现出参工厂
