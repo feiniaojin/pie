@@ -22,7 +22,7 @@ pie源码地址：https://github.com/feiniaojin/pie.git
 
 pie案例工程源码地址：https://github.com/feiniaojin/pie-example.git
 
-![yf0KL8.jpg](https://s3.ax1x.com/2021/02/19/yf0KL8.jpg)
+[![vKEpfe.png](https://s1.ax1x.com/2022/08/07/vKEpfe.png)](https://imgtu.com/i/vKEpfe)
 
 # 2. 快速入门
 
