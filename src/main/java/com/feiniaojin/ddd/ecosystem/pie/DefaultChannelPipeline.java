@@ -1,4 +1,4 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 /**
  * ChannelPipeline默认实现
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public class DefaultChannelPipeline implements ChannelPipeline {
 
@@ -105,7 +104,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         public void channelProcess(ChannelHandlerContext ctx,
                                    Object in,
                                    Object out) throws Exception {
-            logger.info("head:channelProcess");
+            if(logger.isDebugEnabled()){
+                logger.debug("head:channelProcess");
+            }
             ctx.fireChannelProcess(in, out);
         }
 

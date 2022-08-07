@@ -1,9 +1,8 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 通道
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public interface Channel {
 

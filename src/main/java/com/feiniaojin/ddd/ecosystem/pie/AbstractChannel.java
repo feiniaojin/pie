@@ -1,9 +1,8 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 抽象通道
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public abstract class AbstractChannel implements Channel {
 

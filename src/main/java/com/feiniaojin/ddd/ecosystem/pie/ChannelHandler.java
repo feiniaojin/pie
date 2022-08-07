@@ -1,9 +1,8 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * ChannelHandler
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public interface ChannelHandler {
 

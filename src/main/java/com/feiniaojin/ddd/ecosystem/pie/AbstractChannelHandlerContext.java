@@ -1,9 +1,8 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 抽象ChannelHandlerContext
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public abstract class AbstractChannelHandlerContext implements ChannelHandlerContext {
     volatile AbstractChannelHandlerContext next;

@@ -1,9 +1,8 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 启动配置类
  *
- * @author: <a href=mailto:943868899@qq.com>Yujie</a>
  */
 public class BootStrap {
 

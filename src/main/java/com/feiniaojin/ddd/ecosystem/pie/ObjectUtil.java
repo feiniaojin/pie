@@ -1,4 +1,4 @@
-package com.feiniaojin.pie;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 import java.util.Collection;
 
