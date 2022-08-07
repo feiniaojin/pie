@@ -22,7 +22,7 @@ pie源码地址：https://github.com/feiniaojin/pie.git
 
 pie案例工程源码地址：https://github.com/feiniaojin/pie-example.git
 
-[![vKEpfe.png](https://s1.ax1x.com/2022/08/07/vKEpfe.png)](https://imgtu.com/i/vKEpfe)
+[![vK8vJs.png](https://s1.ax1x.com/2022/08/07/vK8vJs.png)](https://imgtu.com/i/vK8vJs)
 
 # 2. 快速入门
 
@@ -216,4 +216,141 @@ public class ArticleModifyExample1 {
 以下是运行ArticleModifyExample1的main方法打出的日志，可以看到我们定义的handler被逐个执行了。
 
 [![vKSLpq.png](https://s1.ax1x.com/2022/08/07/vKSLpq.png)](https://imgtu.com/i/vKSLpq)
+
+# 3. 异常处理
+
+在pie案例工程( https://github.com/feiniaojin/pie-example.git )的example2包中，展示了某个Handler抛出异常时的处理方式。
+
+我们可将其异常处理逻辑实现在当前Handler的exceptionCaught方法中。
+
+假设ArticleModifyTitleHandler的业务逻辑会抛出异常，实例代码如下：
+
+```java
+public class ArticleModifyTitleHandler implements ChannelHandler {
+
+    private Logger logger = LoggerFactory.getLogger(ArticleModifyTitleHandler.class);
+
+    @Override
+    public void channelProcess(ChannelHandlerContext ctx,
+                               Object in,
+                               Object out) throws Exception {
+
+        logger.info("修改标题:进入修改标题的Handler");
+
+        ArticleTitleModifyCmd cmd = (ArticleTitleModifyCmd) in;
+
+        String title = cmd.getTitle();
+        
+        //此处的异常用于模拟执行过程中出现异常的场景
+        throw new RuntimeException("修改title发生异常");
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx,
+                                Throwable cause,
+                                Object in,
+                                Object out) throws Exception {
+        logger.error("修改标题:异常处理逻辑");
+        Result re = (Result) out;
+        re.setCode(1501);
+        re.setMsg("修改标题发生异常");
+    }
+}
+```
+此时ArticleModifyTitleHandler的`channelProcess`方法一定会抛出异常，
+在当前Handler的`exceptionCaught`方法中对异常进行了处理。
+
+运行**ArticleModifyExample2**的main方法，输出如下：
+
+[![vKGnQx.png](https://s1.ax1x.com/2022/08/07/vKGnQx.png)](https://imgtu.com/i/vKGnQx)
+
+# 4. 全局异常处理
+
+有时候，我们不想每个handler都处理一遍异常，我们希望在执行链的最后统一进行处理。
+
+在**ArticleModifyExample3**中，我们展示了通过一个全局异常进行最后的异常处理，其实现主要分为以下几步：
+
+## 4.1 业务Handler传递异常
+
+如果实现了Handler接口，那么需要手工调用 **ctx.fireExceptionCaught**方法向下传递异常。
+
+例如**CheckParameterHandler**捕获到异常时的示例如下：
+
+```java
+@Override
+public void exceptionCaught(ChannelHandlerContext ctx,
+        Throwable cause,
+        Object in,
+        Object out) throws Exception {
+    
+    logger.info("参数校验的异常处理逻辑:不处理直接向后传递");
+    ctx.fireExceptionCaught(cause, in, out);
+}
+```
+
+如果业务Handler继承了**ChannelHandlerAdapter**，如果没有重写`fireExceptionCaught`方法，则默认将异常向后传递。
+
+## 4.2 实现全局异常处理的Handler
+
+我们把业务异常处理逻辑放到最后的Handler中进行处理，该Handler继承了**ChannelHandlerAdapter**，只需要重写异常处理的`exceptionCaught`方法。
+
+示例代码如下：
+
+```java
+public class ExceptionHandler extends ChannelHandlerAdapter {
+
+    private Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx,
+                                Throwable cause,
+                                Object in,
+                                Object out) throws Exception {
+
+        logger.error("异常处理器中的异常处理逻辑");
+
+        Result re = (Result) out;
+        re.setCode(500);
+        re.setMsg("系统异常");
+    }
+}
+```
+
+## 4.3 将ExceptionHandler加入到执行链中
+
+直接通过BootStrap加入到执行链最后即可，示例代码如下;
+
+```java
+//创建引导类
+BootStrap bootStrap = new BootStrap();
+
+Result result = (Result) bootStrap
+        .inboundParameter(dto)//入参
+        .outboundFactory(new ResultFactory())//出参工厂
+        .channel(new ArticleModifyChannel())//自定义channel
+        .addChannelHandlerAtLast("checkParameter", new CheckParameterHandler())//第一个handler
+        .addChannelHandlerAtLast("modifyTitle", new ArticleModifyTitleHandler())//第二个handler
+        .addChannelHandlerAtLast("modifyContent", new ArticleModifyContentHandler())//第三个handler
+        .addChannelHandlerAtLast("exception", new ExceptionHandler())//异常处理handler
+        .process();//执行
+        
+//result为执行结果
+logger.info("result:code={},msg={}", result.getCode(), result.getMsg());
+```
+
+## 4.4 运行ArticleModifyExample3
+
+运行ArticleModifyExample3的main方法，控制台输出如下，可以看到异常被传递到最后的ExceptionHandler中进行处理。
+
+[![vKGCLT.png](https://s1.ax1x.com/2022/08/07/vKGCLT.png)](https://imgtu.com/i/vKGCLT)
+
+---
+
+使用过程中如遇到问题，可以通过公众号或者作者微信联系作者。
+
+公众号: MarkWord
+
+目前正在连载更新《Thinking in DDD》系列文章，未来将会对团队管理、架构方法论进行系列分享，欢迎关注
+[![vA1OFU.jpg](https://s1.ax1x.com/2022/08/01/vA1OFU.jpg)](https://imgtu.com/i/vA1OFU)
+[![vA8Dbt.jpg](https://s1.ax1x.com/2022/08/01/vA8Dbt.jpg)](https://imgtu.com/i/vA8Dbt)
 
