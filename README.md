@@ -1,4 +1,5 @@
-[![vuzZ26.jpg](https://s1.ax1x.com/2022/08/07/vuzZ26.jpg)](https://imgtu.com/i/vuzZ26)
+[![p9MwvM8.png](https://s1.ax1x.com/2023/04/26/p9MwvM8.png)](https://imgse.com/i/p9MwvM8)
+
 [![GitHub license](https://img.shields.io/github/license/feiniaojin/pie)](https://github.com/feiniaojin/pie/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/feiniaojin/pie)](https://github.com/feiniaojin/pie/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/feiniaojin/pie)](https://github.com/feiniaojin/pie/network)
