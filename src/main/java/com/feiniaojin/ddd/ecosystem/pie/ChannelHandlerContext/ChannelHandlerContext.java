@@ -1,4 +1,8 @@
-package com.feiniaojin.ddd.ecosystem.pie;
+package com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext;
+
+import com.feiniaojin.ddd.ecosystem.pie.Channel.Channel;
+import com.feiniaojin.ddd.ecosystem.pie.ChannelHandler.ChannelHandler;
+import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.ChannelPipeline;
 
 /**
  * ChannelHandlerContext

@@ -1,5 +1,8 @@
 package com.feiniaojin.ddd.ecosystem.pie;
 
+import com.feiniaojin.ddd.ecosystem.pie.Channel.Channel;
+import com.feiniaojin.ddd.ecosystem.pie.ChannelHandler.ChannelHandler;
+
 /**
  * 启动配置类
  *
