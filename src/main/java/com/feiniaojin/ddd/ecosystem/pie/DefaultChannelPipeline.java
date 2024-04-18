@@ -1,11 +1,5 @@
-package com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.impl;
+package com.feiniaojin.ddd.ecosystem.pie;
 
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext.AbstractChannelHandlerContext;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext.impl.DefaultChannelHandlerContext;
-import com.feiniaojin.ddd.ecosystem.pie.Channel.Channel;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandler.ChannelHandler;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext.ChannelHandlerContext;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.ChannelPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +17,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
     private Channel channel;
 
-    public DefaultChannelPipeline(Channel channel) {
+    protected DefaultChannelPipeline(Channel channel) {
         this.channel = channel;
         tail = new TailContext(this);
         head = new HeadContext(this);
@@ -94,7 +88,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
     final static class HeadContext extends AbstractChannelHandlerContext implements ChannelHandler {
 
-        private Logger logger = LoggerFactory.getLogger(HeadContext.class);
+        private Logger logger = LoggerFactory.getLogger(TailContext.class);
 
         HeadContext(DefaultChannelPipeline pipeline) {
             super(pipeline, HEAD_NAME, HeadContext.class);

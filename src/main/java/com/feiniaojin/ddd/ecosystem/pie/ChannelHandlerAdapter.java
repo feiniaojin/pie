@@ -1,6 +1,4 @@
-package com.feiniaojin.ddd.ecosystem.pie.ChannelHandler;
-
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext.ChannelHandlerContext;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 public abstract class ChannelHandlerAdapter implements ChannelHandler {
 

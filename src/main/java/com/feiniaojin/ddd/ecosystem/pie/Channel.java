@@ -1,6 +1,4 @@
-package com.feiniaojin.ddd.ecosystem.pie.Channel;
-
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.ChannelPipeline;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 通道

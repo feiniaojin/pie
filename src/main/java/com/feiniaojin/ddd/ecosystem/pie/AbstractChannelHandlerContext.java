@@ -1,23 +1,17 @@
-package com.feiniaojin.ddd.ecosystem.pie.ChannelHandlerContext;
-
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.ChannelPipeline;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.impl.DefaultChannelPipeline;
-import com.feiniaojin.ddd.ecosystem.pie.ObjectUtil;
-import com.feiniaojin.ddd.ecosystem.pie.Channel.Channel;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelHandler.ChannelHandler;
+package com.feiniaojin.ddd.ecosystem.pie;
 
 /**
  * 抽象ChannelHandlerContext
  *
  */
 public abstract class AbstractChannelHandlerContext implements ChannelHandlerContext {
-    public volatile AbstractChannelHandlerContext next;
-    public volatile AbstractChannelHandlerContext prev;
+    volatile AbstractChannelHandlerContext next;
+    volatile AbstractChannelHandlerContext prev;
     private DefaultChannelPipeline pipeline;
     private String name;
 
-    protected AbstractChannelHandlerContext(DefaultChannelPipeline pipeline,
-                                            String name, Class<? extends ChannelHandler> handlerClass) {
+    AbstractChannelHandlerContext(DefaultChannelPipeline pipeline,
+                                  String name, Class<? extends ChannelHandler> handlerClass) {
         this.name = (String) ObjectUtil.checkNotNull(name, "name");
         this.pipeline = pipeline;
     }
@@ -67,16 +61,16 @@ public abstract class AbstractChannelHandlerContext implements ChannelHandlerCon
         }
     }
 
-    public static void invokeExceptionCaught(final AbstractChannelHandlerContext next,
-                                             final Throwable cause,
-                                             Object in,
-                                             Object out) {
+    static void invokeExceptionCaught(final AbstractChannelHandlerContext next,
+                                      final Throwable cause,
+                                      Object in,
+                                      Object out) {
         next.invokeExceptionCaught(cause, in, out);
     }
 
-    public static void invokeChannelProcess(final AbstractChannelHandlerContext next,
-                                            Object in,
-                                            Object out) {
+    static void invokeChannelProcess(final AbstractChannelHandlerContext next,
+                                     Object in,
+                                     Object out) {
         next.invokeChannelProcess(in, out);
     }
 

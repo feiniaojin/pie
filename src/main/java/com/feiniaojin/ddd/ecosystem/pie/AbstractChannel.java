@@ -1,9 +1,5 @@
 package com.feiniaojin.ddd.ecosystem.pie;
 
-import com.feiniaojin.ddd.ecosystem.pie.Channel.Channel;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.ChannelPipeline;
-import com.feiniaojin.ddd.ecosystem.pie.ChannelPipeline.impl.DefaultChannelPipeline;
-
 /**
  * 抽象通道
  *
