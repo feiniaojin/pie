@@ -88,7 +88,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
     final static class HeadContext extends AbstractChannelHandlerContext implements ChannelHandler {
 
-        private Logger logger = LoggerFactory.getLogger(TailContext.class);
+        private Logger logger = LoggerFactory.getLogger(HeadContext.class);
 
         HeadContext(DefaultChannelPipeline pipeline) {
             super(pipeline, HEAD_NAME, HeadContext.class);
