@@ -37,6 +37,33 @@ public class HandlerChainTest {
     }
 
     @Test
+    public void shouldExecuteHandlersWithoutName() {
+        HandlerChain<Object, List<String>> chain = HandlerChain.builder(new DefaultChannel<Object, List<String>>())
+                .addHandler(new ChannelHandlerAdapter<Object, List<String>>() {
+                    @Override
+                    public void channelProcess(ChannelHandlerContext<Object, List<String>> ctx, Object in, List<String> out) {
+                        out.add(this.getClass().getName());
+                        ctx.fireChannelProcess(in, out);
+                    }
+                })
+                .addHandler("second", new ChannelHandlerAdapter<Object, List<String>>() {
+                    @Override
+                    public void channelProcess(ChannelHandlerContext<Object, List<String>> ctx, Object in, List<String> out) {
+                        out.add("second");
+                        ctx.fireChannelProcess(in, out);
+                    }
+                })
+                .outboundFactory(() -> new ArrayList<>(2))
+                .build();
+
+        List<String> res = chain.execute(new Object());
+
+        System.out.println("结果: " + res);
+        assertEquals(2, res.size());
+        assertEquals("second", res.get(1));
+    }
+
+    @Test
     public void shouldExecuteHandlersInRegistrationOrder() {
         List<String> order = new ArrayList<>();
 

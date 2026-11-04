@@ -49,6 +49,15 @@ public interface HandlerChain<I, O> {
             this.channel = channel;
         }
 
+        public Builder<I, O> addHandler(ChannelHandler<I, O> handler) {
+            ensureNotBuilt();
+            if (handler == null) {
+                throw new IllegalArgumentException("handler must not be null");
+            }
+            channel.pipeline().addLast(handler.getClass().getName(), handler);
+            return this;
+        }
+
         public Builder<I, O> addHandler(String name, ChannelHandler<I, O> handler) {
             ensureNotBuilt();
             if (name == null) {
