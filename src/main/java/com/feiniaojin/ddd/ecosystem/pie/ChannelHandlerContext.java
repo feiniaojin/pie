@@ -4,21 +4,21 @@ package com.feiniaojin.ddd.ecosystem.pie;
  * ChannelHandlerContext
  *
  */
-public interface ChannelHandlerContext {
+public interface ChannelHandlerContext<I, O> {
 
-    Channel channel();
+    Channel<I, O> channel();
 
-    ChannelHandler handler();
+    ChannelHandler<I, O> handler();
 
-    ChannelPipeline pipeline();
+    ChannelPipeline<I, O> pipeline();
 
-    ChannelHandlerContext process(Object in,
-                                  Object out);
+    ChannelHandlerContext<I, O> process(I in,
+                                        O out);
 
-    ChannelHandlerContext fireExceptionCaught(Throwable cause,
-                                              Object in,
-                                              Object out);
+    ChannelHandlerContext<I, O> fireExceptionCaught(Throwable cause,
+                                                    I in,
+                                                    O out);
 
-    ChannelHandlerContext fireChannelProcess(Object in,
-                                             Object out);
+    ChannelHandlerContext<I, O> fireChannelProcess(I in,
+                                                   O out);
 }

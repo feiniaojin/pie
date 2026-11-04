@@ -4,15 +4,15 @@ package com.feiniaojin.ddd.ecosystem.pie;
  * 通道
  *
  */
-public interface Channel {
+public interface Channel<I, O> {
 
-    Channel process(Object in,
-                    Object out);
+    Channel<I, O> process(I in,
+                          O out);
 
-    ChannelPipeline pipeline();
+    ChannelPipeline<I, O> pipeline();
 
-    interface ChannelProcessor {
-        void doProcess(Object in,
-                       Object out);
+    interface ChannelProcessor<I, O> {
+        void doProcess(I in,
+                       O out);
     }
 }

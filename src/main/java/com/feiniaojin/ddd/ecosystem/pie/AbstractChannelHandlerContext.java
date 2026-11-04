@@ -4,47 +4,47 @@ package com.feiniaojin.ddd.ecosystem.pie;
  * 抽象ChannelHandlerContext
  *
  */
-public abstract class AbstractChannelHandlerContext implements ChannelHandlerContext {
-    volatile AbstractChannelHandlerContext next;
-    volatile AbstractChannelHandlerContext prev;
-    private DefaultChannelPipeline pipeline;
+public abstract class AbstractChannelHandlerContext<I, O> implements ChannelHandlerContext<I, O> {
+    volatile AbstractChannelHandlerContext<I, O> next;
+    volatile AbstractChannelHandlerContext<I, O> prev;
+    private DefaultChannelPipeline<I, O> pipeline;
     private String name;
 
-    AbstractChannelHandlerContext(DefaultChannelPipeline pipeline,
-                                  String name, Class<? extends ChannelHandler> handlerClass) {
+    AbstractChannelHandlerContext(DefaultChannelPipeline<I, O> pipeline,
+                                  String name, Class<?> handlerClass) {
         this.name = (String) ObjectUtil.checkNotNull(name, "name");
         this.pipeline = pipeline;
     }
 
     @Override
-    public Channel channel() {
+    public Channel<I, O> channel() {
         return pipeline.channel();
     }
 
     @Override
-    public ChannelPipeline pipeline() {
+    public ChannelPipeline<I, O> pipeline() {
         return pipeline;
     }
 
     @Override
-    public ChannelHandlerContext fireExceptionCaught(Throwable cause,
-                                                     Object in,
-                                                     Object out) {
+    public ChannelHandlerContext<I, O> fireExceptionCaught(Throwable cause,
+                                                           I in,
+                                                           O out) {
         invokeExceptionCaught(this.next, cause, in, out);
         return this;
     }
 
     @Override
-    public ChannelHandlerContext fireChannelProcess(Object in,
-                                                    Object out) {
+    public ChannelHandlerContext<I, O> fireChannelProcess(I in,
+                                                          O out) {
         invokeChannelProcess(this.next, in, out);
         return this;
     }
 
 
     private void invokeExceptionCaught(final Throwable cause,
-                                       Object in,
-                                       Object out) {
+                                       I in,
+                                       O out) {
         try {
             handler().exceptionCaught(this, cause, in, out);
         } catch (Throwable error) {
@@ -52,8 +52,8 @@ public abstract class AbstractChannelHandlerContext implements ChannelHandlerCon
         }
     }
 
-    private void invokeChannelProcess(Object in,
-                                      Object out) {
+    private void invokeChannelProcess(I in,
+                                      O out) {
         try {
             handler().channelProcess(this, in, out);
         } catch (Throwable throwable) {
@@ -61,22 +61,22 @@ public abstract class AbstractChannelHandlerContext implements ChannelHandlerCon
         }
     }
 
-    static void invokeExceptionCaught(final AbstractChannelHandlerContext next,
-                                      final Throwable cause,
-                                      Object in,
-                                      Object out) {
+    static <I, O> void invokeExceptionCaught(final AbstractChannelHandlerContext<I, O> next,
+                                       final Throwable cause,
+                                       I in,
+                                       O out) {
         next.invokeExceptionCaught(cause, in, out);
     }
 
-    static void invokeChannelProcess(final AbstractChannelHandlerContext next,
-                                     Object in,
-                                     Object out) {
+    static <I, O> void invokeChannelProcess(final AbstractChannelHandlerContext<I, O> next,
+                                            I in,
+                                            O out) {
         next.invokeChannelProcess(in, out);
     }
 
     @Override
-    public ChannelHandlerContext process(Object in,
-                                         Object out) {
+    public ChannelHandlerContext<I, O> process(I in,
+                                               O out) {
 
         try {
             handler().channelProcess(this, in, out);

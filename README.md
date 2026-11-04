@@ -47,9 +47,9 @@ pie目前已打包发布到maven中央仓库，开发者可以直接通过maven�
 例如：
 
 ```java
-public class OutFactoryImpl implements OutboundFactory {
+public class OutFactoryImpl implements OutboundFactory<Result> {
     @Override
-    public Object newInstance() {
+    public Result newInstance() {
         Result result = new Result();
         result.setCode(0);
         result.setMsg("ok");
@@ -73,39 +73,35 @@ public class OutFactoryImpl implements OutboundFactory {
 CheckParameterHandler的代码如下：
 
 ```java
-public class CheckParameterHandler implements ChannelHandler {
+public class CheckParameterHandler implements ChannelHandler<ArticleTitleModifyCmd, Result> {
 
     private Logger logger = LoggerFactory.getLogger(CheckParameterHandler.class);
 
     @Override
-    public void channelProcess(ChannelHandlerContext ctx,
-                               Object in,
-                               Object out) throws Exception {
+    public void channelProcess(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
+                               ArticleTitleModifyCmd in,
+                               Result out) throws Exception {
 
         logger.info("参数校验:开始执行");
 
-        if (in instanceof ArticleTitleModifyCmd) {
-            ArticleTitleModifyCmd cmd = (ArticleTitleModifyCmd) in;
-            String articleId = cmd.getArticleId();
-            Objects.requireNonNull(articleId, "articleId不能为空");
-            String title = cmd.getTitle();
-            Objects.requireNonNull(title, "title不能为空");
-            String content = cmd.getContent();
-            Objects.requireNonNull(content, "content不能为空");
-        }
+        String articleId = in.getArticleId();
+        Objects.requireNonNull(articleId, "articleId不能为空");
+        String title = in.getTitle();
+        Objects.requireNonNull(title, "title不能为空");
+        String content = in.getContent();
+        Objects.requireNonNull(content, "content不能为空");
         logger.info("参数校验:校验通过,即将进入下一个Handler");
         ctx.fireChannelProcess(in, out);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
+    public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
                                 Throwable cause,
-                                Object in,
-                                Object out) throws Exception {
+                                ArticleTitleModifyCmd in,
+                                Result out) throws Exception {
         logger.error("参数校验:异常处理逻辑", cause);
-        Result re = (Result) out;
-        re.setCode(400);
-        re.setMsg("参数异常");
+        out.setCode(400);
+        out.setMsg("参数异常");
     }
 }
 ```
@@ -113,20 +109,18 @@ public class CheckParameterHandler implements ChannelHandler {
 ArticleModifyTitleHandler的代码如下：
 
 ```java
-public class ArticleModifyTitleHandler implements ChannelHandler {
+public class ArticleModifyTitleHandler implements ChannelHandler<ArticleTitleModifyCmd, Result> {
 
     private Logger logger = LoggerFactory.getLogger(ArticleModifyTitleHandler.class);
 
     @Override
-    public void channelProcess(ChannelHandlerContext ctx,
-                               Object in,
-                               Object out) throws Exception {
+    public void channelProcess(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
+                               ArticleTitleModifyCmd in,
+                               Result out) throws Exception {
 
         logger.info("修改标题:进入修改标题的Handler");
 
-        ArticleTitleModifyCmd cmd = (ArticleTitleModifyCmd) in;
-
-        String title = cmd.getTitle();
+        String title = in.getTitle();
         //修改标题的业务逻辑
         logger.info("修改标题:title={}", title);
 
@@ -135,53 +129,50 @@ public class ArticleModifyTitleHandler implements ChannelHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
+    public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
                                 Throwable cause,
-                                Object in,
-                                Object out) throws Exception {
+                                ArticleTitleModifyCmd in,
+                                Result out) throws Exception {
         logger.error("修改标题:异常处理逻辑");
-        Result re = (Result) out;
-        re.setCode(1501);
-        re.setMsg("修改标题发生异常");
+        out.setCode(1501);
+        out.setMsg("修改标题发生异常");
     }
 }
 ```
 
 ArticleModifyContentHandler的代码如下：
 ```java
-public class ArticleModifyContentHandler implements ChannelHandler {
+public class ArticleModifyContentHandler implements ChannelHandler<ArticleTitleModifyCmd, Result> {
 
     private Logger logger = LoggerFactory.getLogger(ArticleModifyContentHandler.class);
 
     @Override
-    public void channelProcess(ChannelHandlerContext ctx,
-                               Object in,
-                               Object out) throws Exception {
+    public void channelProcess(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
+                               ArticleTitleModifyCmd in,
+                               Result out) throws Exception {
 
         logger.info("修改正文:进入修改正文的Handler");
-        ArticleTitleModifyCmd cmd = (ArticleTitleModifyCmd) in;
-        logger.info("修改正文,content={}", cmd.getContent());
+        logger.info("修改正文,content={}", in.getContent());
         logger.info("修改正文:执行完成,即将进入下一个Handler");
         ctx.fireChannelProcess(in, out);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
+    public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
                                 Throwable cause,
-                                Object in,
-                                Object out) throws Exception {
+                                ArticleTitleModifyCmd in,
+                                Result out) throws Exception {
 
         logger.error("修改标题:异常处理逻辑");
 
-        Result re = (Result) out;
-        re.setCode(1502);
-        re.setMsg("修改正文发生异常");
+        out.setCode(1502);
+        out.setMsg("修改正文发生异常");
     }
 }
 
 ```
 
-## 2.4 通过BootStrap拼装并执行 
+## 2.4 通过HandlerChain拼装并执行
 
 ```java
 public class ArticleModifyExample1 {
@@ -195,22 +186,21 @@ public class ArticleModifyExample1 {
         dto.setTitle("articleId_001_title");
         dto.setContent("articleId_001_content");
         
-        //创建引导类
-        BootStrap bootStrap = new BootStrap();
+        //创建并拼装责任链
+        HandlerChain<ArticleTitleModifyCmd, Result> handlerChain = HandlerChain
+                .builder(new ArticleModifyChannel())//自定义channel
+                .addHandler("checkParameter", new CheckParameterHandler())//第一个handler
+                .addHandler("modifyTitle", new ArticleModifyTitleHandler())//第二个handler
+                .addHandler("modifyContent", new ArticleModifyContentHandler())//第三个handler
+                .outboundFactory(new OutFactoryImpl())//出参工厂
+                .build();
 
-		//拼装
-        Result result = (Result) bootStrap
-                .inboundParameter(dto)//入参
-                .outboundFactory(new ResultFactory())//出参工厂
-                .channel(new ArticleModifyChannel())//自定义channel
-                .addChannelHandlerAtLast("checkParameter", new CheckParameterHandler())//第一个handler
-                .addChannelHandlerAtLast("modifyTitle", new ArticleModifyTitleHandler())//第二个handler
-                .addChannelHandlerAtLast("modifyContent", new ArticleModifyContentHandler())//第三个handler
-                .process();//执行
+        //执行
+        Result result = handlerChain.execute(dto);
         //result为执行结果
         logger.info("result:code={},msg={}", result.getCode(),result.getMsg());
     }
-｝
+}
 ```
 ## 2.5执行结果
 
@@ -227,34 +217,31 @@ public class ArticleModifyExample1 {
 假设ArticleModifyTitleHandler的业务逻辑会抛出异常，实例代码如下：
 
 ```java
-public class ArticleModifyTitleHandler implements ChannelHandler {
+public class ArticleModifyTitleHandler implements ChannelHandler<ArticleTitleModifyCmd, Result> {
 
     private Logger logger = LoggerFactory.getLogger(ArticleModifyTitleHandler.class);
 
     @Override
-    public void channelProcess(ChannelHandlerContext ctx,
-                               Object in,
-                               Object out) throws Exception {
+    public void channelProcess(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
+                               ArticleTitleModifyCmd in,
+                               Result out) throws Exception {
 
         logger.info("修改标题:进入修改标题的Handler");
 
-        ArticleTitleModifyCmd cmd = (ArticleTitleModifyCmd) in;
-
-        String title = cmd.getTitle();
+        String title = in.getTitle();
         
         //此处的异常用于模拟执行过程中出现异常的场景
         throw new RuntimeException("修改title发生异常");
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
+    public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
                                 Throwable cause,
-                                Object in,
-                                Object out) throws Exception {
+                                ArticleTitleModifyCmd in,
+                                Result out) throws Exception {
         logger.error("修改标题:异常处理逻辑");
-        Result re = (Result) out;
-        re.setCode(1501);
-        re.setMsg("修改标题发生异常");
+        out.setCode(1501);
+        out.setMsg("修改标题发生异常");
     }
 }
 ```
@@ -279,10 +266,10 @@ public class ArticleModifyTitleHandler implements ChannelHandler {
 
 ```java
 @Override
-public void exceptionCaught(ChannelHandlerContext ctx,
+public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
         Throwable cause,
-        Object in,
-        Object out) throws Exception {
+        ArticleTitleModifyCmd in,
+        Result out) throws Exception {
     
     logger.info("参数校验的异常处理逻辑:不处理直接向后传递");
     ctx.fireExceptionCaught(cause, in, out);
@@ -298,42 +285,40 @@ public void exceptionCaught(ChannelHandlerContext ctx,
 示例代码如下：
 
 ```java
-public class ExceptionHandler extends ChannelHandlerAdapter {
+public class ExceptionHandler extends ChannelHandlerAdapter<ArticleTitleModifyCmd, Result> {
 
     private Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx,
+    public void exceptionCaught(ChannelHandlerContext<ArticleTitleModifyCmd, Result> ctx,
                                 Throwable cause,
-                                Object in,
-                                Object out) throws Exception {
+                                ArticleTitleModifyCmd in,
+                                Result out) throws Exception {
 
         logger.error("异常处理器中的异常处理逻辑");
 
-        Result re = (Result) out;
-        re.setCode(500);
-        re.setMsg("系统异常");
+        out.setCode(500);
+        out.setMsg("系统异常");
     }
 }
 ```
 
 ## 4.3 将ExceptionHandler加入到执行链中
 
-直接通过BootStrap加入到执行链最后即可，示例代码如下;
+直接通过HandlerChain加入到执行链最后即可，示例代码如下;
 
 ```java
-//创建引导类
-BootStrap bootStrap = new BootStrap();
+//创建并拼装责任链
+HandlerChain<ArticleTitleModifyCmd, Result> handlerChain = HandlerChain
+        .builder(new ArticleModifyChannel())//自定义channel
+        .addHandler("checkParameter", new CheckParameterHandler())//第一个handler
+        .addHandler("modifyTitle", new ArticleModifyTitleHandler())//第二个handler
+        .addHandler("modifyContent", new ArticleModifyContentHandler())//第三个handler
+        .addHandler("exception", new ExceptionHandler())//异常处理handler
+        .outboundFactory(new OutFactoryImpl())//出参工厂
+        .build();
 
-Result result = (Result) bootStrap
-        .inboundParameter(dto)//入参
-        .outboundFactory(new ResultFactory())//出参工厂
-        .channel(new ArticleModifyChannel())//自定义channel
-        .addChannelHandlerAtLast("checkParameter", new CheckParameterHandler())//第一个handler
-        .addChannelHandlerAtLast("modifyTitle", new ArticleModifyTitleHandler())//第二个handler
-        .addChannelHandlerAtLast("modifyContent", new ArticleModifyContentHandler())//第三个handler
-        .addChannelHandlerAtLast("exception", new ExceptionHandler())//异常处理handler
-        .process();//执行
+Result result = handlerChain.execute(dto);//执行
         
 //result为执行结果
 logger.info("result:code={},msg={}", result.getCode(), result.getMsg());
