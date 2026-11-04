@@ -15,7 +15,7 @@ public class DefaultChannelPipeline<I, O> implements ChannelPipeline<I, O> {
     private static final String HEAD_NAME = generateName0(HeadContext.class);
     private static final String TAIL_NAME = generateName0(TailContext.class);
 
-    private Channel<I, O> channel;
+    private final Channel<I, O> channel;
 
     protected DefaultChannelPipeline(Channel<I, O> channel) {
         this.channel = channel;
@@ -61,7 +61,7 @@ public class DefaultChannelPipeline<I, O> implements ChannelPipeline<I, O> {
     final static class TailContext<I, O> extends AbstractChannelHandlerContext<I, O>
             implements ChannelHandler<I, O> {
 
-        private Logger logger = LoggerFactory.getLogger(TailContext.class);
+        private final Logger logger = LoggerFactory.getLogger(TailContext.class);
 
         TailContext(DefaultChannelPipeline<I, O> pipeline) {
             super(pipeline, TAIL_NAME, TailContext.class);
@@ -93,7 +93,7 @@ public class DefaultChannelPipeline<I, O> implements ChannelPipeline<I, O> {
     final static class HeadContext<I, O> extends AbstractChannelHandlerContext<I, O>
             implements ChannelHandler<I, O> {
 
-        private Logger logger = LoggerFactory.getLogger(HeadContext.class);
+        private final Logger logger = LoggerFactory.getLogger(HeadContext.class);
 
         HeadContext(DefaultChannelPipeline<I, O> pipeline) {
             super(pipeline, HEAD_NAME, HeadContext.class);
