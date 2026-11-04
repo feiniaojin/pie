@@ -4,14 +4,14 @@ package com.feiniaojin.ddd.ecosystem.pie;
  * ChannelHandler
  *
  */
-public interface ChannelHandler {
+public interface ChannelHandler<I, O> {
 
-    void channelProcess(ChannelHandlerContext ctx,
-                        Object in,
-                        Object out) throws Exception;
+    void channelProcess(ChannelHandlerContext<I, O> ctx,
+                        I in,
+                        O out) throws Exception;
 
-    void exceptionCaught(ChannelHandlerContext ctx,
+    void exceptionCaught(ChannelHandlerContext<I, O> ctx,
                          Throwable cause,
-                         Object in,
-                         Object out) throws Exception;
+                         I in,
+                         O out) throws Exception;
 }

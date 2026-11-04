@@ -10,11 +10,12 @@ public class BootStrapTest {
 
     @Test
     public void shouldBuildConfiguredBootStrap() {
-        DefaultChannel channel = new DefaultChannel();
+        DefaultChannel<Object, String> channel = new DefaultChannel<>();
         Object inbound = new Object();
-        BootStrap<String> bootStrap = BootStrap.builder(() -> "outbound")
+        BootStrap<Object, String> bootStrap = BootStrap.<Object, String>builder()
                 .channel(channel)
                 .inboundParameter(inbound)
+                .outboundFactory(() -> "outbound")
                 .build();
 
         assertSame("outbound", bootStrap.process());
@@ -24,12 +25,15 @@ public class BootStrapTest {
     public void shouldAddChannelHandlerFromBuilder() {
         AtomicBoolean handled = new AtomicBoolean();
 
-        BootStrap<String> bootStrap = BootStrap.builder(() -> "outbound")
-                .channel(new DefaultChannel())
-                .inboundParameter(new Object())
-                .addChannelHandlerAtLast("handler", new ChannelHandlerAdapter() {
+        BootStrap<String, String> bootStrap = BootStrap.<String, String>builder()
+                .channel(new DefaultChannel<>())
+                .inboundParameter("str")
+                .outboundFactory(() -> "outbound")
+                .addChannelHandlerAtLast("handler", new ChannelHandlerAdapter<String, String>() {
                     @Override
-                    public void channelProcess(ChannelHandlerContext ctx, Object in, Object out) {
+                    public void channelProcess(ChannelHandlerContext<String, String> ctx,
+                                               String in,
+                                               String out) {
                         handled.set(true);
                     }
                 })
@@ -42,8 +46,9 @@ public class BootStrapTest {
 
     @Test
     public void shouldUseDefaultChannelWhenChannelIsNotConfigured() {
-        BootStrap<String> bootStrap = BootStrap.builder(() -> "outbound")
+        BootStrap<Object, String> bootStrap = BootStrap.<Object, String>builder()
                 .inboundParameter(new Object())
+                .outboundFactory(() -> "outbound")
                 .build();
 
         assertSame("outbound", bootStrap.process());
@@ -51,14 +56,31 @@ public class BootStrapTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldRejectMissingInboundParameter() {
-        BootStrap.builder(() -> "outbound")
+        BootStrap.<Object, String>builder()
+                .inboundParameter(null)
+                .outboundFactory(() -> "outbound")
                 .build();
     }
 
     @Test(expected = IllegalStateException.class)
     public void shouldRejectMissingOutboundFactory() {
-        BootStrap.<String>builder()
+        BootStrap.<Object, String>builder()
                 .inboundParameter(new Object())
+                .outboundFactory(null)
                 .build();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldRejectAddingHandlerBeforeChannelIsConfigured() {
+        BootStrap.<Object, String>builder()
+                .inboundParameter(new Object())
+                .outboundFactory(() -> "outbound")
+                .addChannelHandlerAtLast("handler", new ChannelHandlerAdapter<Object, String>() {
+                    @Override
+                    public void channelProcess(ChannelHandlerContext<Object, String> ctx,
+                                               Object in,
+                                               String out) {
+                    }
+                });
     }
 }
